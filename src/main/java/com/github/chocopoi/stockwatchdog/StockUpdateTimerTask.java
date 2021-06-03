@@ -18,12 +18,13 @@ public class StockUpdateTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        logger.info("Executing scheduled stock update task.");
+        logger.info("Start executing scheduled stock update task.");
         stockManager.updateAllAvailableProducts();
         try {
             stockManager.saveDatabase();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        logger.info("Executed scheduled stock update task.");
     }
 }

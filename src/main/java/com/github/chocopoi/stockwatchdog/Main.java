@@ -1,6 +1,7 @@
 package com.github.chocopoi.stockwatchdog;
 
 import com.github.chocopoi.stockwatchdog.reporters.StockReporter;
+import com.github.chocopoi.stockwatchdog.reporters.discord.DiscordStockReporter;
 import com.github.chocopoi.stockwatchdog.websites.AbstractStockWebsite;
 import com.github.chocopoi.stockwatchdog.websites.NeweggStockWebsite;
 
@@ -18,11 +19,10 @@ public class Main {
                         "Watching stock for RTX 3080 Ti in multiple websites.",
                         "rtx 3080 ti")
         }, new StockReporter[] {
-
+                new DiscordStockReporter("discord_settings.json")
         }, "stock_database.json");
 
         stockManager.loadDatabase();
-
         stockManager.startTimer();
     }
 
