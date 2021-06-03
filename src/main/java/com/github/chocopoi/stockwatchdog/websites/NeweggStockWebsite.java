@@ -8,7 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -48,6 +51,20 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
         }
     }
 
+    private static void writeToFile(String fileName, String content) {
+        File file = new File(fileName);
+        try {
+            if (!file.exists()){
+                file.createNewFile();
+            }
+            PrintWriter writer = new PrintWriter(new FileWriter(file));
+            writer.println(content);
+            writer.close();
+        } catch (IOException e) {
+            logger.error("error writing to file", e);
+        }
+    }
+
     @Override
     public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException {
         String queryForUrl = exactQuery.replaceAll(" +", "+");
@@ -64,6 +81,8 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
 
             Calendar cal = Calendar.getInstance();
             lastRequestTimestamp = cal.getTimeInMillis();
+
+            writeToFile("newegg_debug_" + cal.getTimeInMillis() + ".html", doc.html());
 
             //Extract maximum page from pagination
             String paginationStr = doc.select("div.list-tool-pagination span.list-tool-pagination-text strong").first().html();
@@ -99,7 +118,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
 
                 item.stockWebsiteIdentifier = getIdentifier();
                 item.productFullName = fullName;
-                item.url = el.select("a.item-title").attr("href");
+                item.url = el.select("a.item-title").attr("href").replaceAll(" ", "%20");
                 item.imageUrl = el.select("a.item-img img").attr("src");
 
                 String itemStockDomId = el.select("div.item-stock").attr("id");

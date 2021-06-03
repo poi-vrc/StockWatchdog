@@ -78,3 +78,4 @@ target/
 
 stock_database.json
 discord_settings.json
+*_debug_*.html
