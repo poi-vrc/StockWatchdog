@@ -16,7 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-public class NeweggStockWebsite extends AbstractStockWebsite{
+public class NeweggStockWebsite extends AbstractStockWebsite {
 
     private static final Logger logger = LogManager.getLogger(NeweggStockWebsite.class);
 
@@ -54,7 +54,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
     private static void writeToFile(String fileName, String content) {
         File file = new File(fileName);
         try {
-            if (!file.exists()){
+            if (!file.exists()) {
                 file.createNewFile();
             }
             PrintWriter writer = new PrintWriter(new FileWriter(file));
@@ -110,7 +110,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
                 String fullName = el.select("a.item-title").html();
 
                 //only include those with exact wordings
-                if (!fullName.toLowerCase().contains(exactQuery.toLowerCase())){
+                if (!fullName.toLowerCase().contains(exactQuery.toLowerCase())) {
                     continue;
                 }
 
@@ -160,7 +160,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite{
     }
 
     @Override
-    public boolean checkProductStock(ProductItem productItem) throws IOException{
+    public boolean checkProductStock(ProductItem productItem) throws IOException {
         Document doc = Jsoup.connect(productItem.url).get();
         String productFlags = doc.select("div.product-flag").html();
         return !productFlags.contains("OUT OF STOCK");

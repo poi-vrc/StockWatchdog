@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        StockManager stockManager = new StockManager(new AbstractStockWebsite[] {
+        StockManager stockManager = new StockManager(new AbstractStockWebsite[]{
                 new NeweggStockWebsite()
         }, new StockQuery[]{
                 new StockQuery(
@@ -18,7 +18,7 @@ public class Main {
                         "RTX 3080 Ti",
                         "Watching stock for RTX 3080 Ti in multiple websites.",
                         "rtx 3080 ti")
-        }, new StockReporter[] {
+        }, new StockReporter[]{
                 new DiscordStockReporter("discord_settings.json")
         }, "stock_database.json");
 

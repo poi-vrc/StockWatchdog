@@ -23,7 +23,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
 
     private static final Logger logger = LogManager.getLogger(DiscordStockReporter.class);
 
-    private static final GatewayIntent[] INTENTS = new GatewayIntent[]{ GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS };
+    private static final GatewayIntent[] INTENTS = new GatewayIntent[]{GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS};
 
     private final Gson gson;
 
@@ -119,7 +119,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
                     EmbedType.RICH,
                     null,
                     0,
-                    null, null,null, null, null, null, null
+                    null, null, null, null, null, null, null
             )).queue();
         } else {
             logger.warn("the channel with ID \"" + channelId + "\" returns a null TextChannel.");
@@ -154,7 +154,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
         if (msg.getContentRaw().equals("sw+register")) {
             MessageChannel channel = event.getChannel();
             try {
-                if (!settings.targetChannelIds.contains(channel.getId())){
+                if (!settings.targetChannelIds.contains(channel.getId())) {
                     settings.targetChannelIds.add(channel.getId());
                     saveSettings();
                     channel.sendMessage("This channel will be used to announce stock updates.").queue();
@@ -194,7 +194,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
                     null,
                     0,
                     new MessageEmbed.Thumbnail(item.imageUrl, null, 300, 225),
-                    null,null, null, null, null, null
+                    null, null, null, null, null, null
             ));
         } else {
             logger.debug("Unable to send any messages on new product detected because discord is not ready");
@@ -205,14 +205,14 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
     public void onStockAvailable(ProductItem item) {
         if (ready) {
             broadcastEmbed(new MessageEmbed(
-                        item.url,
-                        "✔ Stock Available",
-                        "**\"" + item.productFullName + "\"** is now in stock.",
-                        EmbedType.LINK,
-                        null,
-                        0,
-                        new MessageEmbed.Thumbnail(item.imageUrl, null, 300, 225),
-                        null,null, null, null, null, null
+                    item.url,
+                    "✔ Stock Available",
+                    "**\"" + item.productFullName + "\"** is now in stock.",
+                    EmbedType.LINK,
+                    null,
+                    0,
+                    new MessageEmbed.Thumbnail(item.imageUrl, null, 300, 225),
+                    null, null, null, null, null, null
             ));
         } else {
             logger.debug("Unable to send any messages on stock available because discord is not ready");

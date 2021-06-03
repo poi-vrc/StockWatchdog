@@ -82,7 +82,7 @@ public class StockManager {
     public void loadDatabase() throws IOException {
         File file = new File(pathToDatabaseJson);
 
-        if (!file.exists()){
+        if (!file.exists()) {
             return;
         }
 
@@ -95,7 +95,7 @@ public class StockManager {
     public void saveDatabase() throws IOException {
         File file = new File(pathToDatabaseJson);
 
-        if (!file.exists()){
+        if (!file.exists()) {
             file.createNewFile();
         }
 
@@ -106,7 +106,7 @@ public class StockManager {
     }
 
     public void updateProducts(final StockQuery query, final Map<String, ProductItem> newItems) {
-        if (stockDatabase == null){
+        if (stockDatabase == null) {
             stockDatabase = new StockDatabase();
         }
 
@@ -128,7 +128,7 @@ public class StockManager {
         ProductItem newItem;
         String key;
         logger.debug("iterating all keys of new items received");
-        while (it.hasNext()){
+        while (it.hasNext()) {
             key = it.next();
             oldItem = null;
             newItem = newItems.get(key);
