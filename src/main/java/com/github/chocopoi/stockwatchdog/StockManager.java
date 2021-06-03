@@ -42,7 +42,7 @@ public class StockManager {
     }
 
     public void startTimer() {
-        timer.schedule(timerTask, 0, 1 * 60 * 1000);
+        timer.schedule(timerTask, 0, 2 * 60 * 1000);
     }
 
     public void stopTimer() {
@@ -69,7 +69,7 @@ public class StockManager {
 
                 try {
                     newItems = websites[j].getAvailableProducts(queries[i].getQueryString());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error("Error getting available products from \"" + websites[j].getIdentifier() + "\" website: ", e);
                     continue;
                 }
