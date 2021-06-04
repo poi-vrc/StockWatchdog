@@ -2,6 +2,7 @@
 <Configuration status="WARN">
 
     <Properties>
+        <Property name="LOG_PATH">logs</Property>
         <Property name="LOG_PATTERN">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
 
@@ -10,8 +11,8 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <RollingFile name="debugLog" fileName="${sys:APP_LOG_ROOT}/application-debug.log"
-                     filePattern="${sys:APP_LOG_ROOT}/application-debug-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="debugLog" fileName="${LOG_PATH}/debug.log"
+                     filePattern="${LOG_PATH}/debug-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
@@ -20,8 +21,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="infoLog" fileName="${sys:APP_LOG_ROOT}/application-info.log"
-                     filePattern="${sys:APP_LOG_ROOT}/application-info-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="infoLog" fileName="${LOG_PATH}/info.log"
+                     filePattern="${LOG_PATH}/info-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
@@ -30,8 +31,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="errorLog" fileName="${sys:APP_LOG_ROOT}/application-error.log"
-                     filePattern="${sys:APP_LOG_ROOT}/application-error-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="errorLog" fileName="$${LOG_PATH}/error.log"
+                     filePattern="${LOG_PATH}/error-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
