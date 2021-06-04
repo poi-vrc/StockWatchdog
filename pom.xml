@@ -34,6 +34,11 @@
             <artifactId>JDA</artifactId>
             <version>4.2.1_253</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.JicuNull</groupId>
+            <artifactId>WhatsJava</artifactId>
+            <version>v0.1.3-alpha</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -41,6 +46,11 @@
             <id>dv8tion</id>
             <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <name>jitpack.io</name>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 

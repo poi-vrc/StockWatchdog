@@ -78,4 +78,7 @@ target/
 
 stock_database.json
 discord_settings.json
+whatsapp_settings.json
+whatsapp_auth.json
+whatsapp_qr_code.jpg
 *_debug_*.html
