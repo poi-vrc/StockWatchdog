@@ -31,7 +31,7 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="errorLog" fileName="$${LOG_PATH}/error.log"
+        <RollingFile name="errorLog" fileName="${LOG_PATH}/error.log"
                      filePattern="${LOG_PATH}/error-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
