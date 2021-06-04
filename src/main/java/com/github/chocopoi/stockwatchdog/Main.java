@@ -13,8 +13,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         StockManager stockManager = new StockManager(new AbstractStockWebsite[]{
-                new AmazonStockWebsite()
-                //new NeweggStockWebsite()
+                new AmazonStockWebsite(),
+                new NeweggStockWebsite()
         }, new StockQuery[]{
                 new StockQuery(
                         "rtx-3080-ti",
