@@ -2,6 +2,7 @@ package com.github.chocopoi.stockwatchdog.reporters.discord;
 
 import com.github.chocopoi.stockwatchdog.ProductItem;
 import com.github.chocopoi.stockwatchdog.reporters.StockReporter;
+import com.github.chocopoi.stockwatchdog.websites.AbstractStockWebsite;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -184,12 +185,12 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
     }
 
     @Override
-    public void onNewProductDetected(ProductItem item) {
+    public void onNewProductDetected(AbstractStockWebsite website, ProductItem item) {
         if (ready) {
             broadcastEmbed(new MessageEmbed(
                     item.url,
-                    "\uD83D\uDD75 New product detected with stock " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
-                    "**\"" + item.productFullName + "\"** detected with stock status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
+                    "\uD83D\uDD75 New product detected at " + website.getFullName() + " with status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
+                    "**\"" + item.productFullName + "\"** detected at " + website.getFullName() + " with stock status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
                     EmbedType.LINK,
                     null,
                     0,
@@ -202,12 +203,12 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
     }
 
     @Override
-    public void onStockAvailable(ProductItem item) {
+    public void onStockAvailable(AbstractStockWebsite website, ProductItem item) {
         if (ready) {
             broadcastEmbed(new MessageEmbed(
                     item.url,
-                    "✔ Stock Available",
-                    "**\"" + item.productFullName + "\"** is now in stock.",
+                    "✔ Stock Available At " + website.getFullName(),
+                    "**\"" + item.productFullName + "\"** is now in stock at " + website.getFullName(),
                     EmbedType.LINK,
                     null,
                     0,

@@ -41,6 +41,15 @@ public class StockManager {
         gson = new GsonBuilder().disableHtmlEscaping().create();
     }
 
+    public AbstractStockWebsite getStockWebsiteByIdentifier(String identifier) {
+        for (int i = 0; i < websites.length; i++) {
+            if (websites[i].getIdentifier().equals(identifier)) {
+                return websites[i];
+            }
+        }
+        return null;
+    }
+
     public void startTimer() {
         timer.schedule(timerTask, 0, 2 * 60 * 1000);
     }
@@ -50,14 +59,16 @@ public class StockManager {
     }
 
     private void reportNewDetectedProduct(ProductItem item) {
+        AbstractStockWebsite website = getStockWebsiteByIdentifier(item.stockWebsiteIdentifier);
         for (int i = 0; i < reporters.length; i++) {
-            reporters[i].onNewProductDetected(item);
+            reporters[i].onNewProductDetected(website, item);
         }
     }
 
     private void reportProductStockAvailable(ProductItem item) {
+        AbstractStockWebsite website = getStockWebsiteByIdentifier(item.stockWebsiteIdentifier);
         for (int i = 0; i < reporters.length; i++) {
-            reporters[i].onStockAvailable(item);
+            reporters[i].onStockAvailable(website, item);
         }
     }
 
@@ -140,6 +151,7 @@ public class StockManager {
             } else {
                 newItem.firstDetectedTimestamp = newItem.updatedTimestamp;
                 newItem.lastInStockTimestamp = -1;
+
                 reportNewDetectedProduct(newItem);
                 logger.info("New product detected for \"" + newItem.productFullName + "\":" + newItem.url);
             }

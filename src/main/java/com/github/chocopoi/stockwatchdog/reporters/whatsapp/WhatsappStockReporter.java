@@ -2,6 +2,7 @@ package com.github.chocopoi.stockwatchdog.reporters.whatsapp;
 
 import com.github.chocopoi.stockwatchdog.ProductItem;
 import com.github.chocopoi.stockwatchdog.reporters.StockReporter;
+import com.github.chocopoi.stockwatchdog.websites.AbstractStockWebsite;
 import com.google.gson.Gson;
 import icu.jnet.whatsjava.ClientActionListener;
 import icu.jnet.whatsjava.WAClient;
@@ -157,16 +158,16 @@ public class WhatsappStockReporter extends ClientActionListener implements Stock
     }
 
     @Override
-    public void onNewProductDetected(ProductItem item) {
+    public void onNewProductDetected(AbstractStockWebsite website, ProductItem item) {
         broadcastMessage(
-                "\uD83D\uDD75 New product **\"" + item.productFullName + "\"** detected with stock " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34") +
+                "\uD83D\uDD75 New product **\"" + item.productFullName + "\"** detected at " + website.getFullName() + " with status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34") +
                 "\nLink: " + item.url);
     }
 
     @Override
-    public void onStockAvailable(ProductItem item) {
+    public void onStockAvailable(AbstractStockWebsite website, ProductItem item) {
         broadcastMessage(
-                "✔ Stock available for **\"" + item.productFullName + "\"**\n" +
+                "✔ Stock available at " + website.getFullName() + " for **\"" + item.productFullName + "\"**\n" +
                         "Link: " + item.url);
     }
 }

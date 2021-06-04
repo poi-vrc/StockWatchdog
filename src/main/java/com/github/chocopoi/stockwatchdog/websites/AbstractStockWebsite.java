@@ -9,12 +9,19 @@ public abstract class AbstractStockWebsite {
 
     private final String identifier;
 
-    public AbstractStockWebsite(String identifier) {
+    private final String fullName;
+
+    public AbstractStockWebsite(String identifier, String fullName) {
         this.identifier = identifier;
+        this.fullName = fullName;
     }
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public abstract boolean isWebsiteOnline();

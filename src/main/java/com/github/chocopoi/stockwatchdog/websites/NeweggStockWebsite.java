@@ -22,6 +22,8 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
 
     private static final String IDENTIFIER = "newegg";
 
+    private static final String FULL_NAME = "Newegg";
+
     private static final String QUERY_URL = "https://www.newegg.com/global/hk-en/p/pl?d=";
 
     private static final String PAGE_PREFIX = "&page=";
@@ -31,7 +33,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
     private long lastRequestTimestamp;
 
     public NeweggStockWebsite() {
-        super(IDENTIFIER);
+        super(IDENTIFIER, FULL_NAME);
         lastRequestTimestamp = -1;
     }
 
