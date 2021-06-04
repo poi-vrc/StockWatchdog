@@ -190,7 +190,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
             broadcastEmbed(new MessageEmbed(
                     item.url,
                     "\uD83D\uDD75 New product detected at " + website.getFullName() + " with status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
-                    "**\"" + item.productFullName + "\"** detected at " + website.getFullName() + " with stock status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34"),
+                    "**\"" + item.productFullName + "\"** detected at " + website.getFullName() + " with stock status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34") + "\nPrice: " + item.currency + "$" + item.price,
                     EmbedType.LINK,
                     null,
                     0,
@@ -208,7 +208,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
             broadcastEmbed(new MessageEmbed(
                     item.url,
                     "✔ Stock Available At " + website.getFullName(),
-                    "**\"" + item.productFullName + "\"** is now in stock at " + website.getFullName(),
+                    "**\"" + item.productFullName + "\"** is now in stock at " + website.getFullName() + ".\nPrice: " + item.currency + "$" + item.price,
                     EmbedType.LINK,
                     null,
                     0,

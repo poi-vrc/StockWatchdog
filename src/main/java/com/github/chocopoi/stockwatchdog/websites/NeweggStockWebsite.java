@@ -8,13 +8,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 public class NeweggStockWebsite extends AbstractStockWebsite {
 
@@ -29,6 +28,8 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
     private static final String PAGE_PREFIX = "&page=";
 
     private static final String CHECK_ONLINE_URL = "https://www.newegg.com/global/hk-en/";
+
+    private static final String ORIGIN_URL = "https://www.newegg.com/";
 
     private long lastRequestTimestamp;
 
@@ -53,20 +54,6 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
         }
     }
 
-    private static void writeToFile(String fileName, String content) {
-        File file = new File(fileName);
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            PrintWriter writer = new PrintWriter(new FileWriter(file));
-            writer.println(content);
-            writer.close();
-        } catch (IOException e) {
-            logger.error("error writing to file", e);
-        }
-    }
-
     @Override
     public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException {
         String queryForUrl = exactQuery.replaceAll(" +", "+");
@@ -79,12 +66,13 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
         //loop all pages
         while (pageNumber <= maxPages) {
             String url = QUERY_URL + queryForUrl + PAGE_PREFIX + pageNumber;
-            Document doc = Jsoup.connect(url).get();
+            HttpURLConnection conn = prepareUrlConnection(url, ORIGIN_URL);
+            Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
 
             Calendar cal = Calendar.getInstance();
             lastRequestTimestamp = cal.getTimeInMillis();
 
-            writeToFile("newegg_debug_" + cal.getTimeInMillis() + ".html", doc.html());
+            writeToFile("debug", "newegg_debug_" + cal.getTimeInMillis() + ".html", doc.html());
 
             //Extract maximum page from pagination
             String paginationStr = doc.select("div.list-tool-pagination span.list-tool-pagination-text strong").first().html();

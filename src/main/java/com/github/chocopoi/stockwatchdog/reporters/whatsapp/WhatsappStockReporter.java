@@ -161,13 +161,15 @@ public class WhatsappStockReporter extends ClientActionListener implements Stock
     public void onNewProductDetected(AbstractStockWebsite website, ProductItem item) {
         broadcastMessage(
                 "\uD83D\uDD75 New product **\"" + item.productFullName + "\"** detected at " + website.getFullName() + " with status " + (item.inStock ? "\uD83D\uDFE2" : "\uD83D\uDD34") +
-                "\nLink: " + item.url);
+                        "\nPrice: " + item.currency + "$" + item.price +
+                        "\nLink: " + item.url);
     }
 
     @Override
     public void onStockAvailable(AbstractStockWebsite website, ProductItem item) {
         broadcastMessage(
                 "✔ Stock available at " + website.getFullName() + " for **\"" + item.productFullName + "\"**\n" +
-                        "Link: " + item.url);
+                        "\nPrice: " + item.currency + "$" + item.price +
+                        "\nLink: " + item.url);
     }
 }

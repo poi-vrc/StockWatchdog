@@ -8,11 +8,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class AmazonStockWebsite extends AbstractStockWebsite {
 
@@ -53,6 +55,7 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
 
     @Override
     public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException {
+        logger.debug("begin crawling amazon available products for \"" + exactQuery + "\"");
         String queryForUrl = exactQuery.replaceAll(" +", "+");
 
         String url = QUERY_URL + queryForUrl + SUFFIX;
@@ -61,17 +64,35 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
 
         boolean hasNextBtn = true;
         while (hasNextBtn) {
-            Document doc = Jsoup.connect(url).get();
+            logger.debug("crawling at " + url);
+            HttpURLConnection conn = prepareUrlConnection(url, DOMAIN_URL);
+            Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
             long timeNow = System.currentTimeMillis();
             lastRequestTimestamp = timeNow;
 
+            writeToFile("debug", "amazon_debug_" + timeNow + ".html", doc.html());
+
             //obtain next pagination
-            url = doc.select("ul.a-pagination a-last a").attr("href");
-            hasNextBtn = !url.isEmpty();
+            String paginationUrl = doc.select("ul.a-pagination li.a-last a").attr("href");
+            if (!paginationUrl.isEmpty()) {
+                url = DOMAIN_URL + paginationUrl;
+                hasNextBtn = true;
+            } else {
+                hasNextBtn = false;
+            }
+            logger.debug("next pagination: \"" + url + "\" hasNextBtn: " + hasNextBtn);
 
             ProductItem item;
-            Elements els = doc.select("s-result-item");
+            Elements els = doc.select("div[data-asin]");
+            logger.debug("looping " + els.size() + " found s-result-items");
             for (Element el : els) {
+                String fullName = el.select("div h2 a span").html();
+
+                //only include those with exact wordings
+                if (!fullName.toLowerCase().contains(exactQuery.toLowerCase())) {
+                    continue;
+                }
+
                 String id = el.attr("data-asin");
 
                 if (id.isEmpty()) {
@@ -80,6 +101,7 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
                 }
 
                 item = new ProductItem();
+
                 item.productItemIdentifier = getIdentifier() + "_" + id;
                 item.stockWebsiteIdentifier = getIdentifier();
                 item.url = DOMAIN_URL + el.selectFirst("a").attr("href");
@@ -109,7 +131,7 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
                     item.inStock = false;
                 }
 
-                item.productFullName = el.select("div h2 a span").html();
+                item.productFullName = fullName;
                 item.updatedTimestamp = timeNow;
 
                 map.put(item.productItemIdentifier, item);
