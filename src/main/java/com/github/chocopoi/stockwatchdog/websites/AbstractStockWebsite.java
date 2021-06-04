@@ -34,7 +34,7 @@ public abstract class AbstractStockWebsite {
 
     public static void writeToFile(String path, String fileName, String content) {
         File folder = new File(path);
-        if (!folder.exists()){
+        if (!folder.exists()) {
             folder.mkdirs();
         }
 
@@ -51,7 +51,7 @@ public abstract class AbstractStockWebsite {
         }
     }
 
-    public final HttpURLConnection prepareUrlConnection(String urlStr, String targetOriginReferer) throws IOException{
+    public final HttpURLConnection prepareUrlConnection(String urlStr, String targetOriginReferer) throws IOException {
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -74,7 +74,7 @@ public abstract class AbstractStockWebsite {
     public final InputStream prepareInputStream(URLConnection conn) throws IOException {
         String encoding = conn.getHeaderField("Content-Encoding");
         InputStream in;
-        if (encoding != null && encoding.equals("gzip")){
+        if (encoding != null && encoding.equals("gzip")) {
             in = new GZIPInputStream(conn.getInputStream());
         } else {
             in = conn.getInputStream();
