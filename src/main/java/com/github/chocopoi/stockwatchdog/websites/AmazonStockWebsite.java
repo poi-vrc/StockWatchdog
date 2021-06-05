@@ -107,16 +107,16 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
                 item.url = DOMAIN_URL + el.selectFirst("a").attr("href");
                 item.imageUrl = el.select("img").attr("src");
 
-                Element priceEl = el.selectFirst("span.a-price a-offscreen");
+                Element priceEl = el.selectFirst("span.a-price span.a-offscreen");
 
                 if (priceEl != null) {
                     String html = priceEl.html();
-                    if (html.length() == 0) {
+                    if (html.length() < 2) {
                         logger.warn("Price string is empty, skipping price parse");
                         item.currency = null;
                         item.price = -1;
                     } else {
-                        html = html.substring(0);
+                        html = html.substring(1).replaceAll(",", "");
                         item.currency = "USD"; //amazon defaults to USD
                         try {
                             item.price = Float.parseFloat(html);

@@ -168,7 +168,7 @@ public class WhatsappStockReporter extends ClientActionListener implements Stock
     @Override
     public void onStockAvailable(AbstractStockWebsite website, ProductItem item) {
         broadcastMessage(
-                "✔ Stock available at " + website.getFullName() + " for **\"" + item.productFullName + "\"**\n" +
+                "✅ Stock available at " + website.getFullName() + " for **\"" + item.productFullName + "\"**\n" +
                         "\nPrice: " + item.currency + "$" + item.price +
                         "\nLink: " + item.url);
     }

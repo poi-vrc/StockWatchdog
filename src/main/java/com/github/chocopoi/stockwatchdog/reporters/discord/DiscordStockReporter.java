@@ -207,7 +207,7 @@ public class DiscordStockReporter extends ListenerAdapter implements StockReport
         if (ready) {
             broadcastEmbed(new MessageEmbed(
                     item.url,
-                    "✔ Stock Available At " + website.getFullName(),
+                    "✅ Stock Available At " + website.getFullName(),
                     "**\"" + item.productFullName + "\"** is now in stock at " + website.getFullName() + ".\nPrice: " + item.currency + "$" + item.price,
                     EmbedType.LINK,
                     null,
