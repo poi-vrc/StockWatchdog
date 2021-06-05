@@ -76,6 +76,7 @@ fabric.properties
 target
 target/
 
+config.json
 stock_database.json
 discord_settings.json
 whatsapp_settings.json

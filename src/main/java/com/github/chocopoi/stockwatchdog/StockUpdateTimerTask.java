@@ -21,7 +21,7 @@ public class StockUpdateTimerTask extends TimerTask {
         logger.info("Start executing scheduled stock update task.");
         stockManager.updateAllAvailableProducts();
         try {
-            stockManager.saveDatabase();
+            stockManager.getStockDatabase().save();
         } catch (IOException e) {
             e.printStackTrace();
         }

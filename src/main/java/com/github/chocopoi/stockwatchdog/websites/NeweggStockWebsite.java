@@ -1,6 +1,7 @@
 package com.github.chocopoi.stockwatchdog.websites;
 
 import com.github.chocopoi.stockwatchdog.ProductItem;
+import com.github.chocopoi.stockwatchdog.distributed.DistributedRequestServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -33,8 +34,8 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
 
     private long lastRequestTimestamp;
 
-    public NeweggStockWebsite() {
-        super(IDENTIFIER, FULL_NAME);
+    public NeweggStockWebsite(DistributedRequestServer drs) {
+        super(IDENTIFIER, FULL_NAME, drs);
         lastRequestTimestamp = -1;
     }
 
@@ -55,7 +56,7 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
     }
 
     @Override
-    public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException {
+    public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws Exception {
         String queryForUrl = exactQuery.replaceAll(" +", "+");
 
         int pageNumber = 1;
@@ -66,8 +67,14 @@ public class NeweggStockWebsite extends AbstractStockWebsite {
         //loop all pages
         while (pageNumber <= maxPages) {
             String url = QUERY_URL + queryForUrl + PAGE_PREFIX + pageNumber;
-            HttpURLConnection conn = prepareUrlConnection(url, ORIGIN_URL);
-            Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
+            //HttpURLConnection conn = prepareUrlConnection(url, ORIGIN_URL);
+            //Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
+            Document doc = getJsoupDocument(url, ORIGIN_URL);
+
+            if (doc == null) {
+                logger.error("jsoup document returned null at " + url + ", aborting");
+                return map;
+            }
 
             Calendar cal = Calendar.getInstance();
             lastRequestTimestamp = cal.getTimeInMillis();
