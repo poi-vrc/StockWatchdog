@@ -28,8 +28,8 @@ public class Main {
                         "Watching stock for RTX 3080 Ti in multiple websites.",
                         "rtx 3080 ti")
         }, new StockReporter[]{
-                //new DiscordStockReporter("discord_settings.json"),
-                //new WhatsappStockReporter("whatsapp_settings.json", "whatsapp_auth.json", "whatsapp_qr_code.jpg")
+                new DiscordStockReporter("discord_settings.json"),
+                new WhatsappStockReporter("whatsapp_settings.json", "whatsapp_auth.json", "whatsapp_qr_code.jpg")
         }, config, db);
 
         drs.start();

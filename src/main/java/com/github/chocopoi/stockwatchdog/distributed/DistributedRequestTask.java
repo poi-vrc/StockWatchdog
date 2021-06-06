@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 
 public class DistributedRequestTask implements Callable<Document> {
 
-    private static final int MAXIMUM_FIND_NODE_RETIRES = 3;
+    private static final int MAXIMUM_FIND_NODE_RETIRES = 6;
 
     private static final int REQUEST_TIMEOUT = 150000;
 
