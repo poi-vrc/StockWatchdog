@@ -1,6 +1,7 @@
 package com.github.chocopoi.stockwatchdog.websites;
 
 import com.github.chocopoi.stockwatchdog.ProductItem;
+import com.github.chocopoi.stockwatchdog.distributed.DistributedRequestServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -32,8 +33,8 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
 
     private long lastRequestTimestamp;
 
-    public AmazonStockWebsite() {
-        super(IDENTIFIER, FULL_NAME);
+    public AmazonStockWebsite(DistributedRequestServer drs) {
+        super(IDENTIFIER, FULL_NAME, drs);
         lastRequestTimestamp = -1;
     }
 
@@ -54,7 +55,7 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
     }
 
     @Override
-    public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException {
+    public Map<String, ProductItem> getAvailableProducts(String exactQuery) throws Exception {
         logger.debug("begin crawling amazon available products for \"" + exactQuery + "\"");
         String queryForUrl = exactQuery.replaceAll(" +", "+");
 
@@ -65,8 +66,15 @@ public class AmazonStockWebsite extends AbstractStockWebsite {
         boolean hasNextBtn = true;
         while (hasNextBtn) {
             logger.debug("crawling at " + url);
-            HttpURLConnection conn = prepareUrlConnection(url, DOMAIN_URL);
-            Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
+            //HttpURLConnection conn = prepareUrlConnection(url, DOMAIN_URL);
+            //Document doc = Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
+            Document doc = getJsoupDocument(url, DOMAIN_URL);
+
+            if (doc == null) {
+                logger.error("jsoup document returned null at " + url + ", aborting");
+                return map;
+            }
+
             long timeNow = System.currentTimeMillis();
             lastRequestTimestamp = timeNow;
 

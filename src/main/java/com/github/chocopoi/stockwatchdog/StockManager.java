@@ -1,5 +1,7 @@
 package com.github.chocopoi.stockwatchdog;
 
+import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOServer;
 import com.github.chocopoi.stockwatchdog.reporters.StockReporter;
 import com.github.chocopoi.stockwatchdog.websites.AbstractStockWebsite;
 import com.google.gson.Gson;
@@ -22,23 +24,31 @@ public class StockManager {
 
     private StockDatabase stockDatabase;
 
-    private final Gson gson;
+    private StockWatchdogConfig config;
 
-    private final String pathToDatabaseJson;
+    private final Gson gson;
 
     private final Timer timer;
 
     private final StockUpdateTimerTask timerTask;
 
-    public StockManager(AbstractStockWebsite[] websites, StockQuery[] queries, StockReporter[] reporters, String pathToDatabaseJson) {
+    private boolean started;
+
+    private SocketIOServer server;
+
+    public StockManager(AbstractStockWebsite[] websites, StockQuery[] queries, StockReporter[] reporters, StockWatchdogConfig config, StockDatabase stockDatabase) {
         this.websites = websites;
-        this.pathToDatabaseJson = pathToDatabaseJson;
         this.queries = queries;
         this.reporters = reporters;
+        this.config = config;
+        this.stockDatabase = stockDatabase;
+
         timer = new Timer();
         timerTask = new StockUpdateTimerTask(this);
-        stockDatabase = new StockDatabase();
+
         gson = new GsonBuilder().disableHtmlEscaping().create();
+
+        started = false;
     }
 
     public AbstractStockWebsite getStockWebsiteByIdentifier(String identifier) {
@@ -50,12 +60,37 @@ public class StockManager {
         return null;
     }
 
-    public void startTimer() {
-        timer.schedule(timerTask, 0, 2 * 60 * 1000);
+    public StockDatabase getStockDatabase() {
+        return stockDatabase;
     }
 
-    public void stopTimer() {
+    public StockWatchdogConfig getConfig() {
+        return config;
+    }
+
+    public void start() {
+        if (started) {
+            return;
+        }
+
+        Configuration socketIoConfig = new Configuration();
+        socketIoConfig.setHostname(config.rtsHostName);
+        socketIoConfig.setPort(config.rtsPort);
+        server = new SocketIOServer(socketIoConfig);
+
+        timer.schedule(timerTask, 0, config.crawlFrequency);
+
+        started = true;
+    }
+
+    public void stop() {
+        if (!started) {
+            return;
+        }
         timer.cancel();
+        server.stop();
+
+        started = false;
     }
 
     private void reportNewDetectedProduct(ProductItem item) {
@@ -88,32 +123,6 @@ public class StockManager {
                 updateProducts(queries[i], newItems);
             }
         }
-    }
-
-    public void loadDatabase() throws IOException {
-        File file = new File(pathToDatabaseJson);
-
-        if (!file.exists()) {
-            return;
-        }
-
-        FileInputStream fis = new FileInputStream(file);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-        stockDatabase = gson.fromJson(reader, StockDatabase.class);
-        reader.close();
-    }
-
-    public void saveDatabase() throws IOException {
-        File file = new File(pathToDatabaseJson);
-
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-
-        FileOutputStream fos = new FileOutputStream(file);
-        PrintWriter writer = new PrintWriter(fos);
-        gson.toJson(stockDatabase, writer);
-        writer.close();
     }
 
     public void updateProducts(final StockQuery query, final Map<String, ProductItem> newItems) {

@@ -1,14 +1,20 @@
 package com.github.chocopoi.stockwatchdog.websites;
 
 import com.github.chocopoi.stockwatchdog.ProductItem;
+import com.github.chocopoi.stockwatchdog.distributed.DistributedNode;
+import com.github.chocopoi.stockwatchdog.distributed.DistributedRequestServer;
+import com.github.chocopoi.stockwatchdog.distributed.DistributedRequestTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractStockWebsite {
@@ -19,9 +25,12 @@ public abstract class AbstractStockWebsite {
 
     private final String fullName;
 
-    public AbstractStockWebsite(String identifier, String fullName) {
+    private final DistributedRequestServer drs;
+
+    public AbstractStockWebsite(String identifier, String fullName, DistributedRequestServer drs) {
         this.identifier = identifier;
         this.fullName = fullName;
+        this.drs = drs;
     }
 
     public String getIdentifier() {
@@ -82,10 +91,21 @@ public abstract class AbstractStockWebsite {
         return in;
     }
 
+    public final Document getJsoupDocument(String url, String targetOriginReferer) throws Exception {
+        if (drs != null) {
+            ExecutorService executor = Executors.newCachedThreadPool();
+            Future<Document> result = executor.submit(new DistributedRequestTask(drs, url));
+            return result.get(30000, TimeUnit.MILLISECONDS);
+        } else {
+            HttpURLConnection conn = prepareUrlConnection(url, targetOriginReferer);
+            return Jsoup.parse(prepareInputStream(conn), "UTF-8", url);
+        }
+    }
+
     public abstract boolean isWebsiteOnline();
 
-    public abstract Map<String, ProductItem> getAvailableProducts(String exactQuery) throws IOException;
+    public abstract Map<String, ProductItem> getAvailableProducts(String exactQuery) throws Exception;
 
-    public abstract boolean checkProductStock(ProductItem productItem) throws IOException;
+    public abstract boolean checkProductStock(ProductItem productItem) throws Exception;
 
 }
